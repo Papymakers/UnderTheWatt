@@ -1,0 +1,24 @@
+#pragma once
+
+// Copier ce fichier en "config.h" et renseigner vos identifiants.
+// config.h est à ajouter au .gitignore pour ne jamais versionner de secrets.
+
+#define WIFI_SSID       "VotreSSID"
+#define WIFI_PASSWORD   "VotreMotDePasse"
+
+#define MQTT_BROKER     "192.168.1.20"   // IP ou hostname de votre broker Mosquitto
+#define MQTT_PORT       1883
+#define MQTT_CLIENT_ID  "solarSensor01"
+#define MQTT_USER       ""               // laisser vide si pas d'authentification
+#define MQTT_PASSWORD   ""
+
+// Topics MQTT
+#define TOPIC_IRRADIANCE   "solarSensor/irradiance"   // publication JSON périodique
+#define TOPIC_CALIBRATION  "solarSensor/config/calibration"  // souscription, retained, valeur k (float)
+
+// Calibration par défaut, à ajuster lors de l'étalonnage manuel (voir README)
+// irradiance_wm2 = ADC_mV * CALIBRATION_K
+#define DEFAULT_CALIBRATION_K   9.5f
+
+// Intervalle de publication (ms)
+#define PUBLISH_INTERVAL_MS   15000

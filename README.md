@@ -13,6 +13,8 @@ UnderTheWatt propose deux façons d'y accéder, selon vos compétences et votre 
 
 Chacun y trouve son compte : le widget donne accès à l'information immédiatement à partir de données météo publiques, le capteur permet une mesure locale réelle pour ceux qui veulent aller plus loin — et sert aussi de référence croisée pour étalonner le capteur.
 
+Ce chiffre n'a rien d'abstrait : chaque été, des enfants meurent en France, oubliés dans des véhicules garés au soleil — un mécanisme directement lié à cette même intensité de rayonnement. Voir [`docs/analyse-habitacle-voiture.md`](./docs/analyse-habitacle-voiture.md) pour le contexte et un calcul détaillé de la puissance thermique reçue par un véhicule en plein soleil (~4,5 kW, l'équivalent d'une pompe à chaleur domestique).
+
 ## `widget/` — widget web
 
 - Jauge en temps réel du rayonnement solaire (W/m²), température et indice UV, avec niveaux de risque codés couleur.
@@ -47,10 +49,9 @@ Le widget met en avant le rayonnement global (W/m²) plutôt que l'indice UV par
 Montage complet pour mesurer soi-même le rayonnement solaire réel, sans station météo :
 
 - Cellule PV de référence + shunt résistif + ADS1115 (lecture différentielle) + ESP32-C6, publication MQTT.
-- Nomenclature chiffrée, dimensionnement du shunt, câblage, procédure d'étalonnage croisée avec le widget/Open-Meteo — voir `firmware-solar-sensor/BOM-et-montage.md`.
-- Comparatif complet des cellules PV possibles (Adafruit/Voltaic, gamme ANYSOLAR/IXOLAR, obsolescences, capteurs professionnels) — voir `firmware-solar-sensor/REFERENCES-CELLULES-PV.md`.
 - Firmware PlatformIO prêt à l'emploi (`platformio.ini`, `src/main.cpp`), calibration ajustable à distance via MQTT sans reflash.
 - Coût total estimé hors ESP32 déjà en stock : 10-15 €.
+- Nomenclature chiffrée, dimensionnement du shunt, câblage, procédure d'étalonnage croisée avec le widget/Open-Meteo, et comparatif complet des cellules PV possibles (Adafruit/Voltaic, gamme ANYSOLAR/IXOLAR, capteurs professionnels) : voir [`hardware/`](./hardware).
 
 ## Limites connues
 

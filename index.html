@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UnderTheWatt — Indice d'exposition solaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14161c;
+    --panel:#1b1f27;
+    --panel-2:#232833;
+    --hairline:#2e3542;
+    --paper:#eef0f2;
+    --muted:#8892a0;
+    --accent:#5ec8f2;
+
+    --lvl-0:#2dd4a7; /* faible */
+    --lvl-1:#f5c945; /* modéré */
+    --lvl-2:#f2703c; /* élevé */
+    --lvl-3:#e8452f; /* très élevé */
+    --lvl-4:#d92b4b; /* extrême */
+
+    --font-display:'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --font-body:'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--font-body);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:24px;
+  }
+
+  .card{
+    width:100%;
+    max-width:420px;
+    background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+    border:1px solid var(--hairline);
+    border-radius:20px;
+    padding:28px 26px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:-40%;
+    right:-30%;
+    width:260px;
+    height:260px;
+    background:radial-gradient(circle, rgba(94,200,242,0.10) 0%, transparent 70%);
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:2px;
+  }
+  .eyebrow-label{
+    font-family:var(--font-display);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .lang-toggle{
+    display:flex;
+    gap:2px;
+    background:var(--ink);
+    border:1px solid var(--hairline);
+    border-radius:8px;
+    padding:2px;
+  }
+  .lang-toggle button{
+    font-family:var(--font-display);
+    font-size:10px;
+    letter-spacing:0.05em;
+    background:transparent;
+    border:none;
+    color:var(--muted);
+    padding:4px 8px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+  .lang-toggle button.active{
+    background:var(--panel-2);
+    color:var(--paper);
+  }
+
+  .source-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:6px;
+  }
+  .source-row .eyebrow-label{font-size:10px;}
+  .source-note{
+    font-size:10.5px;
+    color:var(--muted);
+    margin:0 0 16px;
+    line-height:1.4;
+  }
+
+  h1{
+    font-size:19px;
+    font-weight:700;
+    margin:8px 0 18px;
+    letter-spacing:-0.01em;
+  }
+
+  .locate-row{
+    display:flex;
+    gap:8px;
+    margin-bottom:20px;
+  }
+  .locate-row input{
+    flex:1;
+    min-width:0;
+    background:var(--ink);
+    border:1px solid var(--hairline);
+    border-radius:10px;
+    color:var(--paper);
+    font-family:var(--font-body);
+    font-size:13px;
+    padding:10px 12px;
+  }
+  .locate-row input::placeholder{color:var(--muted);}
+  .locate-row button{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:13px;
+    background:var(--accent);
+    color:#0b1620;
+    border:none;
+    border-radius:10px;
+    padding:0 14px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .locate-row button:active{transform:translateY(1px);}
+  .geo-btn{
+    background:var(--panel-2) !important;
+    color:var(--paper) !important;
+    border:1px solid var(--hairline) !important;
+  }
+
+  .gauge-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin:6px 0 8px;
+  }
+  svg.gauge{width:100%; max-width:280px; height:auto;}
+  .needle{transform-origin:140px 140px; transition:transform 0.6s cubic-bezier(.22,1,.36,1);}
+
+  .readout{
+    text-align:center;
+    margin-top:-64px;
+  }
+  .readout .value{
+    font-family:var(--font-display);
+    font-size:38px;
+    font-weight:700;
+    line-height:1;
+  }
+  .readout .unit{
+    font-family:var(--font-display);
+    font-size:13px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  .readout .level-label{
+    font-family:var(--font-display);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    margin-top:8px;
+    padding:4px 10px;
+    border-radius:20px;
+    display:inline-block;
+  }
+
+  .advice{
+    background:var(--ink);
+    border:1px solid var(--hairline);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:13.5px;
+    line-height:1.5;
+    color:var(--paper);
+    margin:18px 0 14px;
+  }
+
+  .metrics{
+    display:flex;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .metric{
+    flex:1;
+    background:var(--ink);
+    border:1px solid var(--hairline);
+    border-radius:10px;
+    padding:10px 12px;
+  }
+  .metric .m-label{
+    font-family:var(--font-display);
+    font-size:9.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .metric .m-value{
+    font-family:var(--font-display);
+    font-size:16px;
+    font-weight:500;
+    margin-top:3px;
+  }
+
+  .status{
+    font-size:11.5px;
+    color:var(--muted);
+    text-align:center;
+    min-height:16px;
+    margin-bottom:10px;
+  }
+
+  details{
+    border-top:1px solid var(--hairline);
+    padding-top:12px;
+    margin-top:4px;
+  }
+  summary{
+    font-size:12.5px;
+    color:var(--accent);
+    cursor:pointer;
+    list-style:none;
+    font-weight:600;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::before{content:"+ "; }
+  details[open] summary::before{content:"− ";}
+  .explainer{
+    font-size:12.5px;
+    line-height:1.55;
+    color:var(--muted);
+    margin-top:10px;
+  }
+  .explainer strong{color:var(--paper);}
+
+  .footer{
+    text-align:center;
+    font-size:10.5px;
+    color:var(--muted);
+    margin-top:16px;
+  }
+  .footer a{color:var(--accent); text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="eyebrow">
+    <span class="eyebrow-label" id="eyebrow-label">MESURE EN TEMPS RÉEL</span>
+    <div class="lang-toggle">
+      <button id="btn-fr" class="active">FR</button>
+      <button id="btn-en">EN</button>
+    </div>
+  </div>
+  <h1 id="title">Exposition au rayonnement solaire</h1>
+
+  <div class="source-row">
+    <span class="eyebrow-label">SOURCE</span>
+    <div class="lang-toggle" id="source-toggle">
+      <button id="btn-sat" class="active">SATELLITE</button>
+      <button id="btn-model">MODÈLE</button>
+    </div>
+  </div>
+  <div class="source-note" id="source-note"></div>
+
+  <div class="locate-row">
+    <input id="city-input" type="text" placeholder="Ville…" />
+    <button id="search-btn">OK</button>
+    <button id="geo-btn" class="geo-btn" title="Utiliser ma position">📍</button>
+  </div>
+
+  <div class="gauge-wrap">
+    <svg class="gauge" viewBox="0 0 280 170">
+      <path d="M 20 150 A 120 120 0 0 1 45.86 66.86" stroke="#2dd4a7" stroke-width="18" fill="none" stroke-linecap="round"/>
+      <path d="M 45.86 66.86 A 120 120 0 0 1 103.68 24.30" stroke="#f5c945" stroke-width="18" fill="none" stroke-linecap="round"/>
+      <path d="M 103.68 24.30 A 120 120 0 0 1 176.32 24.30" stroke="#f2703c" stroke-width="18" fill="none" stroke-linecap="round"/>
+      <path d="M 176.32 24.30 A 120 120 0 0 1 234.14 66.86" stroke="#e8452f" stroke-width="18" fill="none" stroke-linecap="round"/>
+      <path d="M 234.14 66.86 A 120 120 0 0 1 260 150" stroke="#d92b4b" stroke-width="18" fill="none" stroke-linecap="round"/>
+      <g class="needle" id="needle">
+        <line x1="140" y1="150" x2="140" y2="42" stroke="#eef0f2" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="140" cy="150" r="7" fill="#eef0f2"/>
+      </g>
+    </svg>
+    <div class="readout">
+      <div class="value" id="value">—</div>
+      <div class="unit">W/m²</div>
+      <div class="level-label" id="level-label">EN ATTENTE</div>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="m-label">Température</div>
+      <div class="m-value" id="m-temp">—</div>
+    </div>
+    <div class="metric">
+      <div class="m-label">Indice UV</div>
+      <div class="m-value" id="m-uv">—</div>
+    </div>
+  </div>
+
+  <div class="advice" id="advice">Cherchez une ville ou utilisez votre position pour afficher le niveau de rayonnement solaire actuel.</div>
+
+  <div class="status" id="status"></div>
+
+  <details>
+    <summary id="why-summary">Pourquoi pas l'indice UV ?</summary>
+    <div class="explainer" id="why-text">
+      <strong>L'indice UV</strong> ne mesure qu'une petite partie du rayonnement solaire (les ultraviolets), et sert surtout à évaluer le risque cutané et oculaire. Il ne reflète pas la <strong>charge thermique</strong> reçue par le corps. Le <strong>rayonnement solaire global</strong> (en W/m²), lui, peut dépasser 1000 W/m² en plein été — proche de la constante solaire au sol — et contribue directement à la sensation de chaleur, en particulier en exposition directe. C'est ce paramètre qu'utilisent les indices de stress thermique professionnels (WBGT) pour le travail extérieur et le sport.
+    </div>
+  </details>
+
+  <details>
+    <summary id="benchmark-summary">Un repère concret</summary>
+    <div class="explainer" id="benchmark-text">
+      Un panneau chauffant infrarouge domestique courant (environ 600 W pour ~0,6 m² de surface rayonnante) délivre une densité de puissance de l'ordre de <strong>1000 W/m²</strong> à sa surface — le même ordre de grandeur que le rayonnement solaire en plein été. On associe spontanément cette intensité au confort d'un chauffage d'intérieur, jamais à un danger. Reçue directement sur la peau en extérieur, c'est pourtant une charge thermique comparable.
+    </div>
+  </details>
+
+  <div class="footer">Données : <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> · <a href="https://github.com/Papymakers/UnderTheWatt" target="_blank" rel="noopener">UnderTheWatt</a></div>
+</div>
+
+<script>
+(function(){
+  const el = {
+    cityInput: document.getElementById('city-input'),
+    searchBtn: document.getElementById('search-btn'),
+    geoBtn: document.getElementById('geo-btn'),
+    value: document.getElementById('value'),
+    levelLabel: document.getElementById('level-label'),
+    advice: document.getElementById('advice'),
+    status: document.getElementById('status'),
+    needle: document.getElementById('needle'),
+    mTemp: document.getElementById('m-temp'),
+    mUv: document.getElementById('m-uv'),
+    title: document.getElementById('title'),
+    eyebrow: document.getElementById('eyebrow-label'),
+    whySummary: document.getElementById('why-summary'),
+    whyText: document.getElementById('why-text'),
+    benchmarkSummary: document.getElementById('benchmark-summary'),
+    benchmarkText: document.getElementById('benchmark-text'),
+    btnFr: document.getElementById('btn-fr'),
+    btnEn: document.getElementById('btn-en'),
+    btnSat: document.getElementById('btn-sat'),
+    btnModel: document.getElementById('btn-model'),
+    sourceNote: document.getElementById('source-note'),
+  };
+
+  let lang = 'fr';
+  let source = 'satellite';
+  let lastLat = null, lastLon = null, lastLabel = '';
+
+  const STR = {
+    fr:{
+      eyebrow:'MESURE EN TEMPS RÉEL',
+      title:"Exposition au rayonnement solaire",
+      placeholder:'Ville…',
+      waiting:"Cherchez une ville ou utilisez votre position pour afficher le niveau de rayonnement solaire actuel.",
+      locating:'Localisation…',
+      loading:'Récupération des données…',
+      notFound:'Ville introuvable.',
+      error:'Données indisponibles pour le moment.',
+      geoDenied:'Position refusée — recherchez une ville.',
+      why:"Pourquoi pas l'indice UV ?",
+      whyBody:"<strong>L'indice UV</strong> ne mesure qu'une petite partie du rayonnement solaire (les ultraviolets), et sert surtout à évaluer le risque cutané et oculaire. Il ne reflète pas la <strong>charge thermique</strong> reçue par le corps. Le <strong>rayonnement solaire global</strong> (en W/m²), lui, peut dépasser 1000 W/m² en plein été — proche de la constante solaire au sol — et contribue directement à la sensation de chaleur, en particulier en exposition directe. C'est ce paramètre qu'utilisent les indices de stress thermique professionnels (WBGT) pour le travail extérieur et le sport.",
+      benchmark:"Un repère concret",
+      benchmarkBody:"Un panneau chauffant infrarouge domestique courant (environ 600 W pour ~0,6 m² de surface rayonnante) délivre une densité de puissance de l'ordre de <strong>1000 W/m²</strong> à sa surface — le même ordre de grandeur que le rayonnement solaire en plein été. On associe spontanément cette intensité au confort d'un chauffage d'intérieur, jamais à un danger. Reçue directement sur la peau en extérieur, c'est pourtant une charge thermique comparable.",
+      satBtn:'SATELLITE',
+      modelBtn:'MODÈLE',
+      sourceNoteSatellite:'Observation satellite (quasi temps réel).',
+      sourceNoteModel:'Modèle météo (prévision, moyenne horaire).',
+      sourceFallback:'Donnée satellite indisponible ici — repli automatique sur le modèle météo.',
+      temp:'Température',
+      uv:'Indice UV',
+      levels:['FAIBLE','MODÉRÉ','ÉLEVÉ','TRÈS ÉLEVÉ','EXTRÊME'],
+      advices:[
+        "Rayonnement faible. Exposition sans précaution particulière.",
+        "Rayonnement modéré. Pensez à une protection pour une exposition prolongée.",
+        "Rayonnement élevé. Recherchez l'ombre aux heures les plus intenses, hydratez-vous.",
+        "Rayonnement très élevé. Limitez l'exposition directe, protection recommandée (ombre, couvre-chef, hydratation).",
+        "Rayonnement extrême — proche du pic théorique au sol. Évitez l'exposition directe prolongée, risque de coup de chaleur accru."
+      ]
+    },
+    en:{
+      eyebrow:'LIVE MEASUREMENT',
+      title:"Solar radiation exposure",
+      placeholder:'City…',
+      waiting:"Search a city or use your location to see current solar radiation levels.",
+      locating:'Locating…',
+      loading:'Fetching data…',
+      notFound:'City not found.',
+      error:'Data unavailable right now.',
+      geoDenied:'Location denied — search a city instead.',
+      why:"Why not the UV index?",
+      whyBody:"<strong>The UV index</strong> only measures a small slice of solar radiation (ultraviolet), and mainly reflects skin and eye risk. It does not capture the <strong>thermal load</strong> the body receives. <strong>Global solar irradiance</strong> (in W/m²) can exceed 1000 W/m² in full summer — close to the solar constant at ground level — and directly contributes to heat stress, especially in direct exposure. This is the parameter used by professional heat-stress indices (WBGT) for outdoor work and sport.",
+      benchmark:"A concrete benchmark",
+      benchmarkBody:"A typical household infrared heating panel (around 600 W over roughly 0.6 m² of radiating surface) delivers a power density on the order of <strong>1000 W/m²</strong> at its surface — the same order of magnitude as full summer sunlight. We instinctively associate that intensity with the comfort of an indoor heater, never with danger. Received directly on skin outdoors, it's a comparable thermal load.",
+      satBtn:'SATELLITE',
+      modelBtn:'MODEL',
+      sourceNoteSatellite:'Satellite observation (near real-time).',
+      sourceNoteModel:'Weather model (forecast, hourly average).',
+      sourceFallback:'Satellite data unavailable here — automatic fallback to weather model.',
+      temp:'Temperature',
+      uv:'UV index',
+      levels:['LOW','MODERATE','HIGH','VERY HIGH','EXTREME'],
+      advices:[
+        "Low radiation. No particular precaution needed.",
+        "Moderate radiation. Consider protection for prolonged exposure.",
+        "High radiation. Seek shade during peak hours, stay hydrated.",
+        "Very high radiation. Limit direct exposure, protection recommended (shade, hat, hydration).",
+        "Extreme radiation — close to the theoretical ground-level peak. Avoid prolonged direct exposure, elevated heat-stroke risk."
+      ]
+    }
+  };
+
+  const LEVEL_COLORS = ['#2dd4a7','#f5c945','#f2703c','#e8452f','#d92b4b'];
+  const NEEDLE_MIN = -90, NEEDLE_MAX = 90, SCALE_MAX = 1200;
+
+  function levelIndex(solar, tempC){
+    let idx;
+    if (solar < 300) idx = 0;
+    else if (solar < 600) idx = 1;
+    else if (solar < 850) idx = 2;
+    else if (solar < 1000) idx = 3;
+    else idx = 4;
+    if (tempC != null && tempC >= 28 && idx < 4) idx += 1;
+    return idx;
+  }
+
+  function render(solar, tempC, uv){
+    const s = STR[lang];
+    const clamped = Math.max(0, Math.min(SCALE_MAX, solar));
+    const angle = NEEDLE_MIN + (clamped / SCALE_MAX) * (NEEDLE_MAX - NEEDLE_MIN);
+    el.needle.style.transform = 'rotate(' + angle + 'deg)';
+
+    el.value.textContent = Math.round(solar);
+    el.value.style.color = '#eef0f2';
+
+    const idx = levelIndex(solar, tempC);
+    el.levelLabel.textContent = s.levels[idx];
+    el.levelLabel.style.background = LEVEL_COLORS[idx] + '26';
+    el.levelLabel.style.color = LEVEL_COLORS[idx];
+
+    el.advice.textContent = s.advices[idx];
+    el.mTemp.textContent = (tempC != null ? tempC.toFixed(1) + '°C' : '—');
+    el.mUv.textContent = (uv != null ? uv.toFixed(1) : '—');
+  }
+
+  function setStatus(msg){ el.status.textContent = msg || ''; }
+
+  function updateSourceNote(activeSource, extra){
+    const s = STR[lang];
+    let base = activeSource === 'satellite' ? s.sourceNoteSatellite : s.sourceNoteModel;
+    el.sourceNote.textContent = extra ? extra : base;
+  }
+
+  async function fetchSatelliteRadiation(lat, lon){
+    const url = 'https://satellite-api.open-meteo.com/v1/archive?latitude=' + lat +
+      '&longitude=' + lon +
+      '&hourly=shortwave_radiation_instant' +
+      '&models=satellite_radiation_seamless' +
+      '&timezone=auto';
+    const res = await fetch(url);
+    const data = await res.json();
+    const times = (data.hourly && data.hourly.time) || [];
+    const values = (data.hourly && data.hourly.shortwave_radiation_instant) || [];
+    if (!times.length) return null;
+    const now = new Date();
+    let bestIdx = -1;
+    for (let i = 0; i < times.length; i++){
+      if (new Date(times[i]) <= now) bestIdx = i;
+    }
+    if (bestIdx === -1) bestIdx = 0;
+    for (let i = bestIdx; i >= 0; i--){
+      if (values[i] != null) return values[i];
+    }
+    return null;
+  }
+
+  async function fetchWeather(lat, lon, label){
+    lastLat = lat; lastLon = lon; lastLabel = label;
+    setStatus(STR[lang].loading);
+    try {
+      const modelUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat +
+        '&longitude=' + lon +
+        '&current=temperature_2m,shortwave_radiation,uv_index' +
+        '&timezone=auto';
+      const res = await fetch(modelUrl);
+      const data = await res.json();
+      const cur = data.current || {};
+      const temp = cur.temperature_2m ?? null;
+      const uv = cur.uv_index ?? null;
+      let solar = cur.shortwave_radiation ?? 0;
+      let activeSource = 'model';
+      let extraNote = '';
+
+      if (source === 'satellite'){
+        try {
+          const satValue = await fetchSatelliteRadiation(lat, lon);
+          if (satValue != null){
+            solar = satValue;
+            activeSource = 'satellite';
+          } else {
+            extraNote = STR[lang].sourceFallback;
+          }
+        } catch(e){
+          extraNote = STR[lang].sourceFallback;
+        }
+      }
+
+      render(solar, temp, uv);
+      updateSourceNote(activeSource, extraNote);
+      setStatus(label || '');
+    } catch(e){
+      setStatus(STR[lang].error);
+    }
+  }
+
+  async function searchCity(){
+    const q = el.cityInput.value.trim();
+    if (!q) return;
+    setStatus(STR[lang].loading);
+    try {
+      const geoUrl = 'https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(q) + '&count=1&language=' + lang;
+      const res = await fetch(geoUrl);
+      const data = await res.json();
+      if (!data.results || !data.results.length){
+        setStatus(STR[lang].notFound);
+        return;
+      }
+      const r = data.results[0];
+      const label = r.name + (r.country ? ', ' + r.country : '');
+      fetchWeather(r.latitude, r.longitude, label);
+    } catch(e){
+      setStatus(STR[lang].error);
+    }
+  }
+
+  function useGeolocation(){
+    if (!navigator.geolocation){
+      setStatus(STR[lang].geoDenied);
+      return;
+    }
+    setStatus(STR[lang].locating);
+    navigator.geolocation.getCurrentPosition(
+      pos => fetchWeather(pos.coords.latitude, pos.coords.longitude, ''),
+      () => setStatus(STR[lang].geoDenied),
+      { timeout: 8000 }
+    );
+  }
+
+  function applyLang(){
+    const s = STR[lang];
+    el.eyebrow.textContent = s.eyebrow;
+    el.title.textContent = s.title;
+    el.cityInput.placeholder = s.placeholder;
+    el.whySummary.textContent = s.why;
+    el.whyText.innerHTML = s.whyBody;
+    el.benchmarkSummary.textContent = s.benchmark;
+    el.benchmarkText.innerHTML = s.benchmarkBody;
+    el.btnSat.textContent = s.satBtn;
+    el.btnModel.textContent = s.modelBtn;
+    el.mTemp.previousElementSibling.textContent = s.temp;
+    el.mUv.previousElementSibling.textContent = s.uv;
+    if (el.value.textContent === '—'){
+      el.advice.textContent = s.waiting;
+      el.levelLabel.textContent = lang === 'fr' ? 'EN ATTENTE' : 'WAITING';
+    }
+    el.btnFr.classList.toggle('active', lang === 'fr');
+    el.btnEn.classList.toggle('active', lang === 'en');
+    if (lastLat != null) updateSourceNote(source === 'satellite' ? 'satellite' : 'model', '');
+  }
+
+  function setSource(newSource){
+    if (source === newSource) return;
+    source = newSource;
+    el.btnSat.classList.toggle('active', source === 'satellite');
+    el.btnModel.classList.toggle('active', source === 'model');
+    if (lastLat != null) fetchWeather(lastLat, lastLon, lastLabel);
+  }
+
+  el.btnFr.addEventListener('click', () => { lang = 'fr'; applyLang(); });
+  el.btnEn.addEventListener('click', () => { lang = 'en'; applyLang(); });
+  el.btnSat.addEventListener('click', () => setSource('satellite'));
+  el.btnModel.addEventListener('click', () => setSource('model'));
+  el.searchBtn.addEventListener('click', searchCity);
+  el.cityInput.addEventListener('keydown', e => { if (e.key === 'Enter') searchCity(); });
+  el.geoBtn.addEventListener('click', useGeolocation);
+
+  applyLang();
+  // Tentative automatique de géolocalisation au chargement
+  useGeolocation();
+})();
+</script>
+
+</body>
+</html>

@@ -3,6 +3,10 @@
 // Copier ce fichier en "config.h" et renseigner vos identifiants.
 // config.h est à ajouter au .gitignore pour ne jamais versionner de secrets.
 
+// Pins I2C (XIAO ESP32-C6) — ADS1115 sur SDA=D4/GPIO22, SCL=D5/GPIO23
+#define I2C_SDA_PIN     22
+#define I2C_SCL_PIN     23
+
 #define WIFI_SSID       "VotreSSID"
 #define WIFI_PASSWORD   "VotreMotDePasse"
 

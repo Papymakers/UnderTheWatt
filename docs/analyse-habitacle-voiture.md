@@ -1,5 +1,7 @@
 # Pourquoi ce projet compte : quand le rayonnement solaire devient un vrai danger
 
+🇫🇷 Français | [🇬🇧 English](./analyse-habitacle-voiture.en.md)
+
 ## Le point de départ
 
 Ce dépôt part d'un constat simple : l'indice UV, largement communiqué au public, ne mesure qu'une petite tranche du rayonnement solaire (les ultraviolets) — pertinente pour le risque cutané et oculaire, mais pas pour la charge thermique reçue par le corps ou par un environnement clos. Le rayonnement solaire global, lui, dépasse régulièrement 1000 W/m² en plein été, et c'est ce paramètre qui compte réellement pour le risque de coup de chaleur.

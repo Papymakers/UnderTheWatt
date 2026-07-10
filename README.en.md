@@ -65,19 +65,6 @@ A complete build to measure real solar radiation yourself, without a weather sta
 
 * **Local UV measurement:** add a dedicated UV sensor (such as the LTR390 or VEML6075, via I²C) to the same ESP32-C6 setup, providing real local measurements of skin exposure risk alongside forecast UV Index data. Thermal load (W/m²) and UV exposure (skin risk) would become the two complementary sides of the same instrument.
 
-## Repository deployment
-
-```bash
-cd UnderTheWatt
-git init
-git add .
-git commit -m "UnderTheWatt v1 — widget + DIY sensor"
-git remote add origin git@github.com:Papymakers/UnderTheWatt.git
-git push -u origin main
-```
-
-Enable GitHub Pages (`main` branch, `/widget` folder) to get a public URL ready to use directly as an `<iframe>`.
-
 ## License
 
 MIT — see [LICENSE](./LICENSE).

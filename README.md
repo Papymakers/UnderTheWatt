@@ -68,19 +68,6 @@ Montage complet pour mesurer soi-même le rayonnement solaire réel, sans statio
   locale réelle — complémentaire de l'indice UV prévisionnel. Le W/m² (thermique) et
   l'UV (cutané) deviendraient les deux faces du même instrument. 
 
-## Déploiement du dépôt
-
-```bash
-cd UnderTheWatt
-git init
-git add .
-git commit -m "UnderTheWatt v1 — widget + capteur DIY"
-git remote add origin git@github.com:Papymakers/UnderTheWatt.git
-git push -u origin main
-```
-
-Activer GitHub Pages (branche `main`, dossier `/widget`) pour obtenir une URL publique directement utilisable en `<iframe>`.
-
 ## Licence
 
 MIT — voir [LICENSE](./LICENSE).

@@ -61,6 +61,10 @@ A complete build to measure real solar radiation yourself, without a weather sta
 - The DIY sensor requires a one-off manual calibration (no professional reference equipment) — indicative accuracy, not metrological.
 - A flat cell without a diffusing dome slightly underestimates irradiance at low sun angles (imperfect cosine response).
 
+## Planned Enhancements
+
+* **Local UV measurement:** add a dedicated UV sensor (such as the LTR390 or VEML6075, via I²C) to the same ESP32-C6 setup, providing real local measurements of skin exposure risk alongside forecast UV Index data. Thermal load (W/m²) and UV exposure (skin risk) would become the two complementary sides of the same instrument.
+
 ## Repository deployment
 
 ```bash

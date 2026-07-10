@@ -2,7 +2,7 @@
 
 🇫🇷 Français | [🇬🇧 English](./README.en.md)
 
-**Le vrai risque du soleil ne se mesure pas en indice UV, mais en watts par mètre carré.**
+**L'indice UV ne dit qu'une partie du danger solaire. L'autre — la charge thermique — se mesure en watts par mètre carré, et personne n'en parle.**
 
 L'indice UV, largement communiqué au public, ne reflète que la composante ultraviolette du rayonnement solaire — pertinente pour le risque cutané et oculaire, mais pas pour la charge thermique reçue par le corps. Le rayonnement solaire global peut dépasser 1000 W/m² en plein été, proche de la constante solaire au sol, et c'est ce paramètre qui compte réellement pour le risque de coup de chaleur en exposition directe. C'est la donnée utilisée par les indices de stress thermique professionnels (WBGT) pour le travail extérieur et le sport — mais elle reste absente de la communication grand public.
 

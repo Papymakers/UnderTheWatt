@@ -61,6 +61,13 @@ Montage complet pour mesurer soi-même le rayonnement solaire réel, sans statio
 - Le capteur DIY nécessite un étalonnage manuel ponctuel (pas de matériel de référence professionnel) — précision indicative, pas métrologique.
 - Une cellule plate sans dôme diffuseur sous-estime légèrement l'irradiance aux faibles hauteurs de soleil (réponse cosinus imparfaite).
 
+## Évolutions envisagées
+
+- **Mesure UV locale** : ajout d'un capteur UV dédié (type LTR390 ou VEML6075, I2C)
+  sur le même montage ESP32-C6, pour couvrir aussi le risque cutané avec une mesure
+  locale réelle — complémentaire de l'indice UV prévisionnel. Le W/m² (thermique) et
+  l'UV (cutané) deviendraient les deux faces du même instrument. 
+
 ## Déploiement du dépôt
 
 ```bash

@@ -2,7 +2,7 @@
 
 [🇫🇷 Français](./README.md) | 🇬🇧 English
 
-**The real danger of the sun isn't measured in UV index, but in watts per square meter.**
+**"The UV Index tells only half the story. Heat load, measured in W/m², tells the rest."** e
 
 The UV index, widely communicated to the public, only reflects the ultraviolet component of solar radiation — relevant for skin and eye risk, but not for the thermal load received by the body. Global solar radiation can exceed 1000 W/m² in full summer, close to the solar constant at ground level, and that's the parameter that actually matters for heatstroke risk in direct exposure. It's the data used by professional heat-stress indices (WBGT) for outdoor work and sport — yet it remains absent from public communication.
 
